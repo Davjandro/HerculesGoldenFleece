@@ -8474,7 +8474,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!212 &589114425
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -8844,7 +8844,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 4145d582c017082438fdab228991748b, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.728
+  m_Volume: 0.074
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -9883,6 +9883,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Offset.y
       value: 0.3455835
+      objectReference: {fileID: 0}
+    - target: {fileID: 8410664184907323832, guid: b81982e82dad5a4439cf0277c2733401,
+        type: 3}
+      propertyPath: m_Constraints
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8410664184907323833, guid: b81982e82dad5a4439cf0277c2733401,
         type: 3}
