@@ -9,28 +9,57 @@ public class MinotaurBossFight : MonoBehaviour
     public float chargeInterval = 1.0f;
     public float speed = 3.0f;
     public float chargeSpeed = 6.0f;
+    public bool vertical;
 
     private bool isCharging = false;
 
-    Rigidbody2D minotaurBody;
+    private Animator minotaurAnimator;
+    private Rigidbody2D minotaurBody;
     private Vector2 playerSnapshot;
 
     // Start is called before the first frame update
     void Start()
     {
         minotaurBody = GetComponent<Rigidbody2D>();
-        InvokeRepeating("StartCharge", chargeInterval, chargeInterval);
+        minotaurAnimator = GetComponent<Animator>();
+        InvokeRepeating("DecideNextAction", 0, chargeInterval);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isCharging)
-        {
+        if (!isCharging)
+        { 
+            // If not charging, walk towards the player
             Vector2 direction = (playerSnapshot - (Vector2)transform.position).normalized;
-            minotaurBody.velocity = direction * chargeSpeed;
+            minotaurBody.velocity = direction * speed;
+
+            // Set the parameters based on the movement direction
+            minotaurAnimator.SetFloat("Move X", direction.x);
+            minotaurAnimator.SetFloat("Move Y", direction.y);
+
+            // Play the appropriate animation based on the movement direction
+            UpdateAnimation();
         }
-        
+    }
+
+    private void DecideNextAction()
+    {
+        if (!isCharging)
+        {
+            TakePlayerSnapshot();
+        }
+        else
+        {
+            isCharging = false;
+            StartCoroutine(StunCoroutine());
+        }
+    }
+
+    private void BossCharge()
+    {
+        Vector2 direction = (playerSnapshot - (Vector2)transform.position).normalized;
+        minotaurBody.velocity = direction * chargeSpeed;
     }
 
     private void StartCharge()
@@ -45,6 +74,7 @@ public class MinotaurBossFight : MonoBehaviour
 
         // Start the charge attack
         isCharging = true;
+        BossCharge();
     }
 
 
@@ -82,6 +112,7 @@ public class MinotaurBossFight : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         PlayerController player = collision.gameObject.GetComponent<PlayerController>();
+        minotaurBody.velocity = Vector2.zero;
         isCharging = false;
 
 
@@ -95,6 +126,37 @@ public class MinotaurBossFight : MonoBehaviour
         {
             // Stun the boss when it hits the wall
             StunBoss();
+        }
+    }
+
+    private void UpdateAnimation()
+    {
+        float moveX = minotaurAnimator.GetFloat("Move X");
+        float moveY = minotaurAnimator.GetFloat("Move Y");
+
+        if (Mathf.Abs(moveX) > Mathf.Abs(moveY))
+        {
+            // Horizontal movement is more significant, play left or right animation
+            if (moveX > 0)
+            {
+                minotaurAnimator.Play("minotaurRight");
+            }
+            else
+            {
+                minotaurAnimator.Play("minotaurLeft");
+            }
+        }
+        else
+        {
+            // Vertical movement is more significant, play up or down animation
+            if (moveY > 0)
+            {
+                minotaurAnimator.Play("minotaurUp");
+            }
+            else
+            {
+                minotaurAnimator.Play("minotaurDown");
+            }
         }
     }
 }
